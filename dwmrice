@@ -38,6 +38,9 @@ elif [ "$answer" = "n" -o "$answer" = "N" -o "$answer" = "no" -o "$answer" = "No
     elif [ "$choice" = "2" ]; then
         continue
     fi
+else 
+    echo invalid input
+    exit 1
 fi
 
 startx
@@ -81,43 +84,25 @@ sudo pacman -S --needed xcompmgr
 setsid xcompmgr
 
 sudo pacman -S python-pywal
-mkdir ~/.local/bin
-cd ~/.local/bin
-touch imagine
-chmod +x imagine
+if [ -d "$HOME/.local/bin" ]; then
+    break
+else 
+    cd $HOME/.local
+    git clone https://github.com/Steven-Alvarado/bin.git
+    chmod +x $HOME/.local/bin/*
+    cd $HOME/.local/bin
+    rm -rf dwmblocks
+    git clone https://github.com/bugswriter/dwmblocks.git
+    cd dwmblocks
+    sudo make install
 
 sudo pacman -S xdotool
-# Make script to update wallpaper and colorscheme
-echo -e "#!/bin/sh
-\n
-\n
-if [ $# -ne 1 ]; then\n
-	echo "Usage: imagine <image file>"\n
-	exit 1\n
-fi\n
-\n
-background="$1"\n
-\n
-echo "imagining $background..."\n
-\n
-#clear cache\n
-wal -c\n
-\n
-#set background\n
-xwallpaper --zoom $background\n
-\n
-#update theme\n
-wal -i $background\n
-xdotool key Super+F5\n
-\n
-#status bar\n
-dwmblocks &\n
-\n
-exit 0\n" >> ~/.local/bin/imagine
 
 ./imagine ~/wallpapers/windwaker.jpg
 
+
 echo -e "\nexport PATH=$HOME/.local/bin:$PATH" >> ~/.zshrc
+
 
 # set up .xinitrc file to run tools on start up
 
