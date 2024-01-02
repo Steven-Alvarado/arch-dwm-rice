@@ -1,0 +1,100 @@
+#!/bin/sh
+
+echo proceed with installing and ricing dwm, dmenu and st? [y/n]
+read answer
+if [ "$answer" -eq "y" ]; then
+
+    echo setting up dwm, dmenu and st...
+    mkdir ~/.local/src
+    cd ~/.local/src
+    git clone https://github.com/bugswriter/dmenu
+    git clone https://github.com/bugswriter/dwm
+    git clone https://github.com/bugswriter/st
+    sudo pacman -S --needed libxft
+    sudo pacman -S --needed libxinerama
+    cd ~/.local/src/dmenu
+    make clean install
+    cd ~/.local/src/dwm
+    make clean install
+    cd ~/.local/src/st
+    make clean install
+    cd ~
+    cp /etc/X11/xinitrc ~/.xinitrc
+    
+    file="~/.xinitrc"
+    total_lines=$(wc -l < "$file")
+    start_line=$((total_lines - 5))
+    sed -i "${start_line},\$d; \$aexec dwm" "$file"
+elif [ "$answer" -eq "n" ]; then 
+    echo "(1) abort rice process"
+    echo "(2) continue to resolution managment"
+    echo "1 or 2"
+    read choice
+    if [ "$choice" -eq "1" ]; then
+        echo aborting script...
+        exit 0
+    elif [ "$choice" -eq "2" ]
+        continue
+    fi
+fi
+
+startx
+echo establishing resolution...
+sudo pacman -S --needed xorg-xrandr
+xrandr
+
+
+while true
+do
+    echo please enter the name of your moniter or screen i.e. Virtual1'\n'
+    echo enter 1 if you would like to see options
+    read monitor_name
+      
+    if [ "$monitor_name" -eq "1" ]; then
+        xrandr
+    fi
+
+    echo please enter your desired resolution i.e. 1920x1080
+    read resolution
+    xrandr --output $monitor_name --mode $resolution
+    echo would you like to make changes to the resolution? [y/n]
+    read answer 
+    if [ "$answer" -eq "n" -o "$answer" -eq "no" ]; then
+        break
+    fi
+done
+
+echo setting up wallpaper management...
+sudo pacman -S --needed xwallpaper
+
+echo installing zsh and zimfw framework...
+cd ~
+sudo pacman -S --needed zsh
+chsh -s $(which zsh)
+curl -fsSL https://raw.githubusercontent.com/zimfw/install/master/install.zsh | zsh
+zsh
+echo "PROMPT=$'\n'"%F{cyan}[%n@%f%F{magenta}%m %F{yellow}%~%f]${git_info[prompt]}%f$ "" >> ~/.zshrc
+source ~/.zshrc
+sudo pacman -S --needed xcompmgr
+setsid xcompmgr
+
+sudo pacman -S python-pywal
+mkdir ~/.local/bin
+
+# To Do: make path exportable from any user
+echo "'\n'export PATH=/home/steven/.local/bin:$PATH" >> ~/.zshrc
+
+echo ricing management installation is complete!
+exit 0
+
+
+
+
+
+
+
+
+
+
+
+
