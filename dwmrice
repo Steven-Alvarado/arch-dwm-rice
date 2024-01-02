@@ -1,9 +1,9 @@
 #!/bin/sh
 
-echo proceed with installing and ricing dwm, dmenu and st? [y/n]
+echo This script installs and configures a minimaly riced and highly configurable dwm system with dmenu and suckless terminal
+echo do you wish to continue? [y/n]
 read answer
-if [ "$answer" -eq "y" ]; then
-
+if [ "$answer" = "y" -o "$answer" = "Y" -o "$answer" = "yes" -o "$answer" = "Yes" ]; then
     echo setting up dwm, dmenu and st...
     mkdir ~/.local/src
     cd ~/.local/src
@@ -20,20 +20,22 @@ if [ "$answer" -eq "y" ]; then
     make clean install
     cd ~
     cp /etc/X11/xinitrc ~/.xinitrc
-    
-    file="~/.xinitrc"
+   
+# Update .xinitrc to exec dwm on startx
+    file="$HOME/.xinitrc"
     total_lines=$(wc -l < "$file")
     start_line=$((total_lines - 5))
     sed -i "${start_line},\$d; \$aexec dwm" "$file"
-elif [ "$answer" -eq "n" ]; then 
+
+elif [ "$answer" = "n" -o "$answer" = "N" -o "$answer" = "no" -o "$answer" = "No" ]; then 
     echo "(1) abort rice process"
     echo "(2) continue to resolution managment"
     echo "1 or 2"
     read choice
-    if [ "$choice" -eq "1" ]; then
+    if [ "$choice" = "1" ]; then
         echo aborting script...
         exit 0
-    elif [ "$choice" -eq "2" ]
+    elif [ "$choice" = "2" ]; then
         continue
     fi
 fi
@@ -41,34 +43,34 @@ fi
 startx
 echo establishing resolution...
 sudo pacman -S --needed xorg-xrandr
-xrandr
 
 
 while true
-do
-    echo please enter the name of your moniter or screen i.e. Virtual1'\n'
-    echo enter 1 if you would like to see options
+do  echo finding current resolution settings...
+    xrandr 
+    echo please enter the name of your monitor or screen i.e. Virtual1'\n'
     read monitor_name
-      
-    if [ "$monitor_name" -eq "1" ]; then
-        xrandr
-    fi
-
     echo please enter your desired resolution i.e. 1920x1080
     read resolution
     xrandr --output $monitor_name --mode $resolution
     echo would you like to make changes to the resolution? [y/n]
     read answer 
-    if [ "$answer" -eq "n" -o "$answer" -eq "no" ]; then
+    if [ "$answer" = "n" -o "$answer" = "no" -o "$answer" = "No" -o "$answer" = "NO" ]; then
         break
     fi
 done
 
+sudo pacman -S --needed wget
 echo setting up wallpaper management...
+cd ~
 sudo pacman -S --needed xwallpaper
+mkdir wallpapers
+
+# use default wallpaper
+wget 'https://w.wallhaven.cc/full/3l/wallhaven-3lrw69.jpg' -O '~/wallpapers/windwaker.jpg'
+
 
 echo installing zsh and zimfw framework...
-cd ~
 sudo pacman -S --needed zsh
 chsh -s $(which zsh)
 curl -fsSL https://raw.githubusercontent.com/zimfw/install/master/install.zsh | zsh
@@ -80,11 +82,47 @@ setsid xcompmgr
 
 sudo pacman -S python-pywal
 mkdir ~/.local/bin
+cd ~/.local/bin
+touch imagine
+chmod +x imagine
 
-# To Do: make path exportable from any user
-echo "'\n'export PATH=/home/steven/.local/bin:$PATH" >> ~/.zshrc
+sudo pacman -S xdotool
+# Make script to update wallpaper and colorscheme
+echo -e "#!/bin/sh
+\n
+\n
+if [ $# -ne 1 ]; then\n
+	echo "Usage: imagine <image file>"\n
+	exit 1\n
+fi\n
+\n
+background="$1"\n
+\n
+echo "imagining $background..."\n
+\n
+#clear cache\n
+wal -c\n
+\n
+#set background\n
+xwallpaper --zoom $background\n
+\n
+#update theme\n
+wal -i $background\n
+xdotool key Super+F5\n
+\n
+#status bar\n
+dwmblocks &\n
+\n
+exit 0\n" >> ~/.local/bin/imagine
 
-echo ricing management installation is complete!
+./imagine ~/wallpapers/windwaker.jpg
+
+echo -e "\nexport PATH=$HOME/.local/bin:$PATH" >> ~/.zshrc
+
+# set up .xinitrc file to run tools on start up
+
+echo rice is complete!
+echo 'simply run "imagine <wallpaperimage.jpg>" to update colorscheme and wallpaper'
 exit 0
 
 
