@@ -1,33 +1,35 @@
 #!/bin/sh
 
-echo This script installs and configures a minimaly riced and highly configurable dwm system with dmenu and suckless terminal
-echo do you wish to continue? [y/n]
-read answer
+read -p "This script installs and configures a minimally riced and highly configurable dwm system with dmenu and suckless terminal
+answer\ndo you wish to continue? [y/n]" answer
 
 # function to check if a program is installed
-function is_installed() {
+is_installed() {
     command -v "$1" >/dev/null 2>&1
 }
 
-if [ "$answer" = "y" -o "$answer" = "Y" -o "$answer" = "yes" -o "$answer" = "Yes" ]; then
+if [ "$answer" = "y" ] || [ "$answer" = "Y" ] || [ "$answer" = "yes" ] || [ "$answer" = "Yes" ]; then
     echo setting up dwm, dmenu and st...
+
     if is_installed dmenu && is_installed dwm && is_installed st; then
         echo "demnu, dwm, and st are already installed"
+
     else
+	# download and install dmenu, dwm, and st
         mkdir -p ~/.local/src
-        cd ~/.local/src
+        cd ~/.local/src || exit
         git clone https://github.com/bugswriter/dmenu
         git clone https://github.com/bugswriter/dwm
         git clone https://github.com/bugswriter/st
         sudo pacman -S --needed libxft
         sudo pacman -S --needed libxinerama
-        cd ~/.local/src/dmenu
+        cd ~/.local/src/dmenu || exit 
         make clean install
-        cd ~/.local/src/dwm
+        cd ~/.local/src/dwm || exit
+        make clean install 
+	cd ~/.local/src/st || exit
         make clean install
-        cd ~/.local/src/st
-        make clean install
-        cd ~
+        cd ~ || exit
         cp /etc/X11/xinit/xinitrc ~/.xinitrc
     
 
@@ -38,32 +40,24 @@ if [ "$answer" = "y" -o "$answer" = "Y" -o "$answer" = "yes" -o "$answer" = "Yes
         sed -i "${start_line},\$d; \$aexec dwm" "$file"
     fi  
 
-elif [ "$answer" = "n" -o "$answer" = "N" -o "$answer" = "no" -o "$answer" = "No" ]; then 
-    echo "(1) abort rice process"
-    echo "(2) continue to resolution managment"
-    echo "1 or 2"
-    read choice
-    if [ "$choice" = "1" ]; then
-        echo aborting script...
-        exit 0
-    elif [ "$choice" = "2" ]; then
-        continue
-    else 
-        echo invalid input
-        exit 1
-    fi
+elif [ "$answer" = "n" ] || [ "$answer" = "N" ] || [ "$answer" = "no" ] || [ "$answer" = "No" ]; then
+    echo aborting script...
+    exit 0
 else 
     echo invalid input
     exit 1
 fi
 
+read -p "would you like to run startx to continue installation?" answer
 
-echo would you like to run startx to continue installation?
-read answer
-
-if [ "$answer" = "y" -o "$answer" = "Y" -o "$answer" = "yes" -o "$answer" = "Yes" ]; then
+if [ "$answer" = "y" ] || [ "$answer" = "Y"  ] || [ "$answer" = "yes"  ] || [ "$answer" = "Yes" ]; then
+    echo run rice script on startup to finish rice. running startx...
+    sleep 3
     startx
-else 
-    echo aborting startx
+elif [ "$answer" = "n" ] || [ "$answer" = "N"  ] || [ "$answer" = "no"  ] || [ "$answer" = "No" ]; then 
+    echo aborting script...
     exit 0
+else 
+    echo invalid input
+    exit 1
 fi
