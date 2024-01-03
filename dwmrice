@@ -3,29 +3,40 @@
 echo This script installs and configures a minimaly riced and highly configurable dwm system with dmenu and suckless terminal
 echo do you wish to continue? [y/n]
 read answer
+
+# function to check if a program is installed
+function is_installed() {
+    command -v "$1" >/dev/null 2>&1
+}
+
 if [ "$answer" = "y" -o "$answer" = "Y" -o "$answer" = "yes" -o "$answer" = "Yes" ]; then
     echo setting up dwm, dmenu and st...
-    mkdir ~/.local/src
-    cd ~/.local/src
-    git clone https://github.com/bugswriter/dmenu
-    git clone https://github.com/bugswriter/dwm
-    git clone https://github.com/bugswriter/st
-    sudo pacman -S --needed libxft
-    sudo pacman -S --needed libxinerama
-    cd ~/.local/src/dmenu
-    make clean install
-    cd ~/.local/src/dwm
-    make clean install
-    cd ~/.local/src/st
-    make clean install
-    cd ~
-    cp /etc/X11/xinitrc ~/.xinitrc
-   
+    if is_installed dmenu && is_installed dwm && is_installed st; then
+        echo "demnu, dwm, and st are already installed"
+    else
+        mkdir -p ~/.local/src
+        cd ~/.local/src
+        git clone https://github.com/bugswriter/dmenu
+        git clone https://github.com/bugswriter/dwm
+        git clone https://github.com/bugswriter/st
+        sudo pacman -S --needed libxft
+        sudo pacman -S --needed libxinerama
+        cd ~/.local/src/dmenu
+        make clean install
+        cd ~/.local/src/dwm
+        make clean install
+        cd ~/.local/src/st
+        make clean install
+        cd ~
+        cp /etc/X11/xinitrc ~/.xinitrc
+    
+
 # Update .xinitrc to exec dwm on startx
-    file="$HOME/.xinitrc"
-    total_lines=$(wc -l < "$file")
-    start_line=$((total_lines - 5))
-    sed -i "${start_line},\$d; \$aexec dwm" "$file"
+        file="$HOME/.xinitrc"
+        total_lines=$(wc -l < "$file")
+        start_line=$((total_lines - 5))
+        sed -i "${start_line},\$d; \$aexec dwm" "$file"
+    fi  
 
 elif [ "$answer" = "n" -o "$answer" = "N" -o "$answer" = "no" -o "$answer" = "No" ]; then 
     echo "(1) abort rice process"
@@ -37,6 +48,9 @@ elif [ "$answer" = "n" -o "$answer" = "N" -o "$answer" = "no" -o "$answer" = "No
         exit 0
     elif [ "$choice" = "2" ]; then
         continue
+    else 
+        echo invalid input
+        exit 1
     fi
 else 
     echo invalid input
@@ -85,17 +99,22 @@ setsid xcompmgr
 
 sudo pacman -S python-pywal
 if [ -d "$HOME/.local/bin" ]; then
-    break
-else 
-    cd $HOME/.local
-    git clone https://github.com/Steven-Alvarado/bin.git
-    chmod +x $HOME/.local/bin/*
-    cd $HOME/.local/bin
-    rm -rf dwmblocks
-    git clone https://github.com/bugswriter/dwmblocks.git
-    cd dwmblocks
-    sudo make install
-
+    echo bin already exists do you wish to proceed? [y/n]
+    read answer
+    if [ "$answer" = "n" -o "$answer" = "N" -o "$answer" = "no" -o "$answer" = "No" ]; then
+        echo aborting rice
+        exit 0
+    fi
+fi
+cd $HOME/.local
+git clone https://github.com/Steven-Alvarado/bin.git
+chmod +x $HOME/.local/bin/*
+cd $HOME/.local/bin
+rm -rf dwmblocks
+git clone https://github.com/bugswriter/dwmblocks.git
+cd dwmblocks
+sudo make install
+cd $HOME/.local/bin
 sudo pacman -S xdotool
 
 ./imagine ~/wallpapers/windwaker.jpg
@@ -105,11 +124,13 @@ echo -e "\nexport PATH=$HOME/.local/bin:$PATH" >> ~/.zshrc
 
 
 # set up .xinitrc file to run tools on start up
-
+sed -i '$d' $HOME/.xinitrc
+echo -e "# Configure colorscheme and background\nimagine ~/wallpapers/windwaker.jpg &\n\n# 
+Transparency\nxcompmgr &\n\nexec dwm" >> $HOME/.xinitrc
 echo rice is complete!
-echo 'simply run "imagine <wallpaperimage.jpg>" to update colorscheme and wallpaper'
+echo "simply run 'imagine <wallpaperimage.jpg>' to update colorscheme and wallpaper"
+echo configure changes to .xinitrc and .zshrc accordingly
 exit 0
-
 
 
 
