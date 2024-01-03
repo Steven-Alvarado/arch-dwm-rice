@@ -1,0 +1,76 @@
+#!/bin/sh
+
+echo establishing resolution...
+   sudo pacman -S --needed xorg-xrandr
+        
+   while true
+   do  echo finding current resolution settings...
+       xrandr 
+       echo please enter the name of your monitor or screen i.e. Virtual1'\n'
+       read monitor_name
+       echo please enter your desired resolution i.e. 1920x1080
+        read resolution
+        xrandr --output $monitor_name --mode $resolution
+        echo would you like to make changes to the resolution? [y/n]
+        read answer 
+        if [ "$answer" = "n" -o "$answer" = "no" -o "$answer" = "No" -o "$answer" = "NO" ]; then
+            break
+        fi
+    done
+    
+    sudo pacman -S --needed wget
+    echo setting up wallpaper management...
+    cd ~
+    sudo pacman -S --needed xwallpaper
+    mkdir wallpapers
+    
+    # use default wallpaper
+    wget 'https://w.wallhaven.cc/full/3l/wallhaven-3lrw69.jpg' -O '~/wallpapers/windwaker.jpg'
+    
+    
+    echo installing zsh and zimfw framework...
+    sudo pacman -S --needed zsh
+    chsh -s $(which zsh)
+    curl -fsSL https://raw.githubusercontent.com/zimfw/install/master/install.zsh | zsh
+    zsh
+    echo "PROMPT=$'\n'"%F{cyan}[%n@%f%F{magenta}%m %F{yellow}%~%f]${git_info[prompt]}%f$ "" >> ~/.zshrc
+    source ~/.zshrc
+    sudo pacman -S --needed xcompmgr
+    setsid xcompmgr
+    
+    sudo pacman -S python-pywal
+    if [ -d "$HOME/.local/bin" ]; then
+        echo bin already exists do you wish to proceed? [y/n]
+        read answer
+        if [ "$answer" = "n" -o "$answer" = "N" -o "$answer" = "no" -o "$answer" = "No" ]; then
+            echo aborting rice
+            exit 0
+        fi
+    fi
+    cd $HOME/.local
+    git clone https://github.com/Steven-Alvarado/bin.git
+    chmod +x $HOME/.local/bin/*
+    cd $HOME/.local/bin
+    rm -rf dwmblocks
+    git clone https://github.com/bugswriter/dwmblocks.git
+    cd dwmblocks
+    sudo make install
+    cd $HOME/.local/bin
+    
+    sudo pacman -S xdotool
+    ./imagine ~/wallpapers/windwaker.jpg
+    
+    
+    echo -e "\nexport PATH=$HOME/.local/bin:$PATH" >> ~/.zshrc
+    
+    
+    # set up .xinitrc file to run tools on start up
+    sed -i '$d' $HOME/.xinitrc
+    echo -e "# Configure colorscheme and background\nimagine ~/wallpapers/windwaker.jpg &\n\n# 
+    Transparency\nxcompmgr &\n\nexec dwm" >> $HOME/.xinitrc
+    echo rice is complete!
+    echo "simply run 'imagine <wallpaperimage.jpg>' to update colorscheme and wallpaper"
+    echo configure changes to .xinitrc and .zshrc accordingly
+ exit 0
+
+

@@ -1,0 +1,69 @@
+#!/bin/sh
+
+echo This script installs and configures a minimaly riced and highly configurable dwm system with dmenu and suckless terminal
+echo do you wish to continue? [y/n]
+read answer
+
+# function to check if a program is installed
+function is_installed() {
+    command -v "$1" >/dev/null 2>&1
+}
+
+if [ "$answer" = "y" -o "$answer" = "Y" -o "$answer" = "yes" -o "$answer" = "Yes" ]; then
+    echo setting up dwm, dmenu and st...
+    if is_installed dmenu && is_installed dwm && is_installed st; then
+        echo "demnu, dwm, and st are already installed"
+    else
+        mkdir -p ~/.local/src
+        cd ~/.local/src
+        git clone https://github.com/bugswriter/dmenu
+        git clone https://github.com/bugswriter/dwm
+        git clone https://github.com/bugswriter/st
+        sudo pacman -S --needed libxft
+        sudo pacman -S --needed libxinerama
+        cd ~/.local/src/dmenu
+        make clean install
+        cd ~/.local/src/dwm
+        make clean install
+        cd ~/.local/src/st
+        make clean install
+        cd ~
+        cp /etc/X11/xinitrc ~/.xinitrc
+    
+
+# Update .xinitrc to exec dwm on startx
+        file="$HOME/.xinitrc"
+        total_lines=$(wc -l < "$file")
+        start_line=$((total_lines - 5))
+        sed -i "${start_line},\$d; \$aexec dwm" "$file"
+    fi  
+
+elif [ "$answer" = "n" -o "$answer" = "N" -o "$answer" = "no" -o "$answer" = "No" ]; then 
+    echo "(1) abort rice process"
+    echo "(2) continue to resolution managment"
+    echo "1 or 2"
+    read choice
+    if [ "$choice" = "1" ]; then
+        echo aborting script...
+        exit 0
+    elif [ "$choice" = "2" ]; then
+        continue
+    else 
+        echo invalid input
+        exit 1
+    fi
+else 
+    echo invalid input
+    exit 1
+fi
+
+
+echo would you like to run startx to continue installation?
+read answer
+
+if [ "$answer" = "y" -o "$answer" = "Y" -o "$answer" = "yes" -o "$answer" = "Yes" ]; then
+    startx
+else 
+    echo aborting startx
+    exit 0
+fi
