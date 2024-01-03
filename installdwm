@@ -28,7 +28,7 @@ if [ "$answer" = "y" -o "$answer" = "Y" -o "$answer" = "yes" -o "$answer" = "Yes
         cd ~/.local/src/st
         make clean install
         cd ~
-        cp /etc/X11/xinitrc ~/.xinitrc
+        cp /etc/X11/xinit/xinitrc ~/.xinitrc
     
 
 # Update .xinitrc to exec dwm on startx
