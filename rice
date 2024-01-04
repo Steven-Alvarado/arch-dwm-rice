@@ -38,7 +38,7 @@ echo establishing resolution...
     
     sudo pacman -S python-pywal
     if [ -d "$HOME/.local/bin" ]; then 
-	echo bin already exists delete it inorder to proceed? [y/n] 
+	echo bin already exists delete it to proceed? [y/n] 
 	read answer
         if [ "$answer" = "n" -o "$answer" = "N" -o "$answer" = "no" -o "$answer" = "No" ]; then
             echo aborting rice
@@ -53,21 +53,22 @@ echo establishing resolution...
     git clone https://github.com/bugswriter/dwmblocks.git
     cd dwmblocks
     sudo make install
+    sleep 5
     cd $HOME/.local/bin
     
     sudo pacman -S xdotool
     ./imagine $HOME/wallpapers/windwaker.jpg
     
-    
+    # Export path to ~/.local/bin in zsh
     echo -e "\nexport PATH=$HOME/.local/bin:$PATH" >> ~/.zshrc
     
     
-    # set up .xinitrc file to run tools on start up
+    # Set up .xinitrc file to run tools on start-up
     sed -i '$d' $HOME/.xinitrc
-    echo -e "# Configure colorscheme and background\nimagine ~/wallpapers/windwaker.jpg &\n\n# 
+    echo -e "# Configure color scheme and background\nimagine ~/wallpapers/windwaker.jpg &\n\n# 
     Transparency\nxcompmgr &\n\nexec dwm" >> $HOME/.xinitrc
     echo rice is complete!
-    echo "simply run 'imagine <wallpaperimage.jpg>' to update colorscheme and wallpaper"
+    echo "simply run 'imagine <wallpaperimage.jpg>' to update color scheme and wallpaper"
     echo configure changes to .xinitrc and .zshrc accordingly
  exit 0
 
