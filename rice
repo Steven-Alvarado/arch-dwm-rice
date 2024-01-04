@@ -33,9 +33,6 @@ echo establishing resolution...
     sudo pacman -S --needed zsh
     chsh -s $(which zsh)
     curl -fsSL https://raw.githubusercontent.com/zimfw/install/master/install.zsh | zsh
-    zsh
-    echo "PROMPT=$'\n'"%F{cyan}[%n@%f%F{magenta}%m %F{yellow}%~%f]${git_info[prompt]}%f$ "" >> ~/.zshrc
-    source ~/.zshrc
     sudo pacman -S --needed xcompmgr
     setsid xcompmgr
     
