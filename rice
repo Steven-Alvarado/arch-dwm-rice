@@ -12,8 +12,7 @@ echo establishing resolution...
        echo please enter your desired resolution i.e. 1920x1080
        read resolution
        xrandr --output $monitor_name --mode $resolution
-        echo would you like to make changes to the resolution? [y/n]
-        read answer 
+        read -p "would you like to make changes to the resolution? [y/n]" answer 
         if [ "$answer" = "n" -o "$answer" = "no" -o "$answer" = "No" -o "$answer" = "NO" ]; then
             break
         fi
