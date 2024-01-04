@@ -1,6 +1,6 @@
 #!/bin/sh
 
-read -p "This script installs and configures a minimally riced and highly configurable dwm system with dmenu and suckless terminal
+read -p "This script installs and configures a minimally riced and highly configurable dwm system with dmenu and st (simple terminal)
 do you wish to continue? [y/n]" answer
 
 # function to check if a program is installed
