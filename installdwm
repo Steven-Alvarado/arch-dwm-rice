@@ -30,19 +30,15 @@ if [ "$answer" = "y" ] || [ "$answer" = "Y" ] || [ "$answer" = "yes" ] || [ "$an
         cd ~/.local/src/dwm || exit
         make clean install 
         sleep 5
-	cd ~/.local/src/st || exit
+        cd ~/.local/src/st || exit
         make clean install
         sleep 5
         cd ~ || exit
         cp /etc/X11/xinit/xinitrc ~/.xinitrc
     
-
 # Update .xinitrc to exec dwm on startx
-        file="$HOME/.xinitrc"
-        total_lines=$(wc -l < "$file")
-        start_line=$((total_lines - 5))
-        sed -i "${start_line},\$d; \$aexec dwm" "$file"
-        cat ~/.xinitrc
+        head -n -5 $HOME/.xinitrc > temp.txt && mv temp.txt $HOME/.xinitrc
+        echo 'exec dwm' >> $HOME/.xinitrc 
         read -p "is execdwm at bottom" answer
         if [ "$answer" = "n" ] || [ "$answer" = "N" ] || [ "$answer" = "no" ] || [ "$answer" = "No" ]; then
             exit 1 
