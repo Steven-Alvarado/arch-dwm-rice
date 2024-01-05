@@ -25,11 +25,11 @@ if [ "$answer" = "y" ] || [ "$answer" = "Y" ] || [ "$answer" = "yes" ] || [ "$an
         sudo pacman -S --needed libxft
         sudo pacman -S --needed libxinerama
         cd ~/.local/src/dmenu || exit 
-        make clean install || { echo 'Failed to make dmenu'; exit 1; }
+        sudo make clean install || { echo 'Failed to make dmenu'; exit 1; }
         cd ~/.local/src/dwm || exit
-        make clean install || { echo 'Failed to make dwm'; exit 1; }
+        sudo make clean install || { echo 'Failed to make dwm'; exit 1; }
         cd ~/.local/src/st || exit
-        make clean install || { echo 'Failed to make st'; exit 1; }
+        sudo make clean install || { echo 'Failed to make st'; exit 1; }
         cd ~ || exit
         cp /etc/X11/xinit/xinitrc ~/.xinitrc
     
