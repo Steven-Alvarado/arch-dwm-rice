@@ -2,32 +2,45 @@
 
 echo establishing resolution...
 sudo pacman -S --needed xorg-xrandr
-        
-while true
-do  
-echo 'finding current resolution settings...'
-xrandr 
-    read -p 'please enter the name of your monitor or screen i.e. Virtual-1. ' monitor_name
-    read -p 'please enter your desired resolution i.e. 1920x1080. ' resolution
-    xrandr --output $monitor_name --mode $resolution
-    read -p 'would you like to make changes to the resolution? [y/n] ' answer 
-    if [ "$answer" = "n" ] || [ "$answer" = "no" ] || [ "$answer" = "No" ] || [ "$answer" = "NO" ]; then
-        break
-    elif [ "$answer" = "y" ] || [ "$answer" = "yes" ] || [ "$answer" = "Yes" ] || [ "$answer" = "YES" ]; then
-        continue
-    else
-        echo 'invalid input aborting script' && exit 1
-    fi
-done
+
+read -p 'Would you like to adjust your resolution? [y\n] ' answer
+case $answer in
+    [yY] | [yY][eE][sS])
+        while true
+        do  
+            echo 'finding current resolution settings...'
+            xrandr 
+            read -p 'please enter the name of your monitor or screen i.e. Virtual-1. ' monitor_name
+            read -p 'please enter your desired resolution i.e. 1920x1080. ' resolution
+            xrandr --output $monitor_name --mode $resolution
+            read -p 'would you like to make changes to the resolution? [y/n] ' answer 
+            if [ "$answer" = "n" ] || [ "$answer" = "no" ] || [ "$answer" = "No" ] || [ "$answer" = "NO" ]; then
+                break
+            elif [ "$answer" = "y" ] || [ "$answer" = "yes" ] || [ "$answer" = "Yes" ] || [ "$answer" = "YES" ]; then
+                continue
+            else
+                echo 'invalid input aborting script' && exit 1
+            fi
+        done
+        ;;
+    [nN] = [nN][oO])
+        echo "skipping resolution configuration"
+        ;;
+    *)
+        echo "Invalid input"
+        ;;
+esac
+
 
 sudo pacman -S --needed wget
 echo 'Setting up wallpaper management...'
 cd ~
 sudo pacman -S --needed xwallpaper
-mkdir wallpapers
+mkdir -p  ~/pictures
+mkdir -p ~/pictures/wallpapers
 
 # use default wallpaper
-wget 'https://w.wallhaven.cc/full/3l/wallhaven-3lrw69.jpg' -O '~/wallpapers/windwaker.jpg'
+wget -O ~/pictures/wallpapers/abstract.png https://w.wallhaven.cc/full/zx/wallhaven-zxxy8o.png
 read -p "would you like to install zsh and the zimfw framework? [y/n] " answer
 if [ "$answer" = "y" ] || [ "$answer" = "Y" ] || [ "$answer" = "yes" ] || [ "$answer" = "Yes" ] || [ "$answer" = "YES" ]; then
     echo 'installing zsh and zimfw framework...'
@@ -42,13 +55,11 @@ cd ~/.local
 git clone https://github.com/Steven-Alvarado/bin.git 
 chmod +x ~/.local/bin/*
 cd ~/.local/bin
-rm -rf ~/.local/bin/dwmblocks
-git clone https://github.com/bugswriter/dwmblocks.git
 cd ~/.local/bin/dwmblocks
 sudo make install
 cd ~/.local/bin
 
-sudo pacman -S xdotool
+sudo pacman -S --needed xdotool
 ./imagine $HOME/wallpapers/windwaker.jpg
 # Export path to ~/.local/bin in zsh
 echo -e '\nexport PATH=$HOME/.local/bin:$PATH' >> ~/.zshrc
