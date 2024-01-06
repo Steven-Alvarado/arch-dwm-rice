@@ -46,16 +46,7 @@ else
     exit 1
 fi
 
-read -p "would you like to run startx to continue installation?" answer
+sudo pacman -S ttf-jetbrains-mono ttf-font-awesome
 
-if [ "$answer" = "y" ] || [ "$answer" = "Y"  ] || [ "$answer" = "yes"  ] || [ "$answer" = "Yes" ]; then
-    echo run rice script on startup to finish rice. running startx...
-    sleep 3
-    startx
-elif [ "$answer" = "n" ] || [ "$answer" = "N"  ] || [ "$answer" = "no"  ] || [ "$answer" = "No" ]; then 
-    echo aborting script...
-    exit 0
-else 
-    echo invalid input
-    exit 1
-fi
+echo 'Suck less utilities have been successfully installed'
+echo 'Run startx and execute rice script to finish setting up the system'
