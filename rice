@@ -23,7 +23,7 @@ case $answer in
             fi
         done
         ;;
-    [nN] = [nN][oO])
+    [nN] | [nN][oO])
         echo "skipping resolution configuration"
         ;;
     *)
