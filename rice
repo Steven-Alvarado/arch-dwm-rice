@@ -14,20 +14,25 @@ case $answer in
             read -p 'please enter your desired resolution i.e. 1920x1080. ' resolution
             xrandr --output $monitor_name --mode $resolution
             read -p 'would you like to make changes to the resolution? [y/n] ' answer 
-            if [ "$answer" = "n" ] || [ "$answer" = "no" ] || [ "$answer" = "No" ] || [ "$answer" = "NO" ]; then
-                break
-            elif [ "$answer" = "y" ] || [ "$answer" = "yes" ] || [ "$answer" = "Yes" ] || [ "$answer" = "YES" ]; then
-                continue
-            else
-                echo 'invalid input aborting script' && exit 1
-            fi
+            case $answer in
+                [yY] | [yY][eE][sS])
+                    break
+                    ;;
+                [nN] | [nN][oO])
+                    continue
+                    ;;
+                *)
+                    echo 'invalid input aborting script' && exit 1
+                    ;;
+            esac
         done
         ;;
     [nN] | [nN][oO])
-        echo "skipping resolution configuration"
+        echo "skipping resolution configuration" 
         ;;
     *)
         echo "Invalid input"
+        exit 1
         ;;
 esac
 
@@ -41,33 +46,94 @@ mkdir -p ~/pictures/wallpapers
 
 # use default wallpaper
 wget -O ~/pictures/wallpapers/abstract.png https://w.wallhaven.cc/full/zx/wallhaven-zxxy8o.png
+
+
 read -p "would you like to install zsh and the zimfw framework? [y/n] " answer
-if [ "$answer" = "y" ] || [ "$answer" = "Y" ] || [ "$answer" = "yes" ] || [ "$answer" = "Yes" ] || [ "$answer" = "YES" ]; then
-    echo 'installing zsh and zimfw framework...'
-    sudo pacman -S --needed zsh
-    chsh -s $(which zsh)
-    curl -fsSL https://raw.githubusercontent.com/zimfw/install/master/install.zsh | zsh
-fi
+
+
+case $answer in
+    [yY] | [yY][eE][sS])
+        echo 'installing zsh and zimfw framework...'
+        sudo pacman -S --needed zsh
+        chsh -s $(which zsh)
+        curl -fsSL https://raw.githubusercontent.com/zimfw/install/master/install.zsh | zsh
+        ;;
+     [nN] | [nN][oO])
+        echo "skipping zsh and zimfw install" 
+        ;;
+    *)
+        echo "Invalid input"
+        exit 1
+        ;;
+esac
+
+
 sudo pacman -S --needed xcompmgr
-setsid xcompmgr &
 sudo pacman -S --needed python-pywal
-cd ~/.local
-git clone https://github.com/Steven-Alvarado/bin.git 
-chmod +x ~/.local/bin/*
-cd ~/.local/bin
-cd ~/.local/bin/dwmblocks
-sudo make install
-cd ~/.local/bin
+
+
+read -p 'Set up ./local/bin with scripts for ricing and status bar? [y/n] ' answer
+
+
+case $answer in
+    [yY] | [yY][eE][sS])
+        cd ~/.local
+        git clone https://github.com/Steven-Alvarado/bin.git 
+        chmod +x ~/.local/bin/*
+        cd ~/.local/bin
+        cd ~/.local/bin/dwmblocks
+        sudo make install
+        cd ~/.local/bin
+        ;;
+    [nN] | [nN][oO])
+        echo "skipping zsh and zimfw install" 
+        ;;
+    *)
+        echo "Invalid input"
+        exit 1
+        ;;
+esac
+
 
 sudo pacman -S --needed xdotool
 ./imagine "$(find ~/pictures/wallpapers -type f \( -name '*.jpg' -o -name '*png' -o -name '*.jpeg' \) | shuf -n 1)"
 # Export path to ~/.local/bin in zsh
-echo -e '\nexport PATH=$HOME/.local/bin:$PATH' >> ~/.zshrc
+
+
+read -p 'Export path to bin in .zshrc/make executable? [y/n]' answer
+case $answer in
+    [yY] | [yY][eE][sS])
+        echo -e '\nexport PATH=$HOME/.local/bin:$PATH' >> ~/.zshrc
+        ;;
+    [nN] | [nN][oO])
+        echo "skipping exporting path to bin" 
+        ;;
+    *)
+        echo "Invalid input"
+        exit 1
+        ;;
+esac
 
 
 # Set up .xinitrc file to run tools on start-up
-sed -i '$d' $HOME/.xinitrc
-echo -e "# Configure color scheme and background\nimagine \"\$(find ~/pictures/wallpapers -type f \( -name '*.jpg' -o -name '*png' -o -name '*.jpeg' \) | shuf -n 1)\" &\n#Transparency\nxcompmgr &\n\nexec dwm" >> ~/.xinitrc
+read -p 'Would you like to update your .xinitrc file to run riced set up on start up? [y/n] ' answer
+
+
+case $answer in
+    [yY] | [yY][eE][sS])
+        sed -i '$d' $HOME/.xinitrc
+        echo -e "# Configure color scheme and background\nimagine \"\$(find ~/pictures/wallpapers -type f \( -name '*.jpg' -o -name '*png' -o -name '*.jpeg' \) | shuf -n 1)\" &\n#Transparency\nxcompmgr &\n\nexec dwm" >> ~/.xinitrc
+        ;;
+    [nN] | [nN][oO])
+        echo "skipping .xinitrc update" 
+        ;;
+    *)
+        echo "Invalid input"
+        exit 1
+        ;;
+esac
+
+
 echo 'rice is complete!'
 echo "simply run 'imagine <wallpaperimage.jpg>' to update color scheme and wallpaper"
 echo 'configure changes to .xinitrc and .zshrc accordingly'
