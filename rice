@@ -60,14 +60,14 @@ sudo make install
 cd ~/.local/bin
 
 sudo pacman -S --needed xdotool
-./imagine $HOME/wallpapers/windwaker.jpg
+./imagine "$(find ~/pictures/wallpapers -type f \( -name '*.jpg' -o -name '*png' -o -name '*.jpeg' \) | shuf -n 1)"
 # Export path to ~/.local/bin in zsh
 echo -e '\nexport PATH=$HOME/.local/bin:$PATH' >> ~/.zshrc
 
 
 # Set up .xinitrc file to run tools on start-up
 sed -i '$d' $HOME/.xinitrc
-echo -e "# Configure color scheme and background\nimagine ~/wallpapers/windwaker.jpg &\n\n# 
+echo -e "# Configure color scheme and background\nimagine "$(find ~/pictures/wallpapers -type f \( -name '*.jpg' -o -name '*png' -o -name '*.jpeg' \) | shuf -n 1)" &\n\n# 
 Transparency\nxcompmgr &\n\nexec dwm" >> ~/.xinitrc
 echo 'rice is complete!'
 echo "simply run 'imagine <wallpaperimage.jpg>' to update color scheme and wallpaper"
