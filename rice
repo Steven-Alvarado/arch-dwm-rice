@@ -49,7 +49,7 @@ cd $HOME/.local/bin
 
 sudo pacman -S xdotool
 ./imagine $HOME/wallpapers/windwaker.jpg
-
+setsid xcompmgr &
 # Export path to ~/.local/bin in zsh
 echo -e '\nexport PATH=$HOME/.local/bin:$PATH' >> ~/.zshrc
 
