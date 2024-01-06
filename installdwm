@@ -48,5 +48,5 @@ fi
 
 sudo pacman -S ttf-jetbrains-mono ttf-font-awesome
 
-echo 'Suck less utilities have been successfully installed'
-echo 'Run startx and execute rice script to finish setting up the system'
+echo -e '\nSuck less utilities have been successfully installed'
+echo -e '\nRun startx and execute rice script to complete rice'
