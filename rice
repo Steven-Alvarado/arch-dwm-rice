@@ -96,7 +96,6 @@ esac
 
 
 sudo pacman -S --needed xdotool
-./imagine "$(find ~/pictures/wallpapers -type f \( -name '*.jpg' -o -name '*png' -o -name '*.jpeg' \) | shuf -n 1)"
 # Export path to ~/.local/bin in zsh
 
 
@@ -132,6 +131,9 @@ case $answer in
         exit 1
         ;;
 esac
+
+
+~/.local/bin/imagine "$(find ~/pictures/wallpapers -type f \( -name '*.jpg' -o -name '*png' -o -name '*.jpeg' \) | shuf -n 1)"
 
 
 echo 'rice is complete!'
