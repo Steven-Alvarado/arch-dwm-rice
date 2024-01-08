@@ -139,4 +139,7 @@ esac
 echo 'rice is complete!'
 echo "simply run 'imagine <wallpaperimage.jpg>' to update color scheme and wallpaper"
 echo 'configure changes to .xinitrc and .zshrc accordingly'
+
+# Remove script directory
+rm -rf ~/arch-dwm-rice
 exit 0
