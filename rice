@@ -140,6 +140,19 @@ echo 'rice is complete!'
 echo "simply run 'imagine <wallpaperimage.jpg>' to update color scheme and wallpaper"
 echo 'configure changes to .xinitrc and .zshrc accordingly'
 
+
 # Remove script directory
-rm -rf ~/arch-dwm-rice
+read -p 'Remove arch-dwm-rice from Home directory' answer
+
+
+case $answer in
+    [yY] | [yY][eE][sS])
+        rm -rf ~/arch-dwm-rice
+        ;;
+    *)
+        echo "Have a great day!"
+        ;;
+esac
+
+
 exit 0
